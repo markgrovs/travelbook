@@ -1,0 +1,22 @@
+baseURL = "https://example.org/"
+locale = "en-us"
+title = "The Passage"
+theme = "travelbook"
+# Copy these settings into the consuming site configuration.
+[pagination]
+  pagerSize = 10
+[taxonomies]
+  journey = "journeys"
+[permalinks.page]
+  posts = "/dispatches/:contentbasename/"
+[permalinks.section]
+  posts = "/dispatches/"
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+[markup.goldmark.parser]
+  wrapStandAloneImageWithinParagraph = false
+
+[params]
+  tagline = "A personal chronicle of motorcycle travel."
+# Add your supplied introduction to content/_index.md.

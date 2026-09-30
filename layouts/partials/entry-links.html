@@ -1,0 +1,10 @@
+{{ $page := . }}
+{{ if or .Params.syndication .Params.in_reply_to .Params.like_of .Params.repost_of }}
+<aside class="entry-links" aria-label="Related links">
+{{ range $field := slice "in_reply_to" "like_of" "repost_of" }}
+{{ with index $page.Params $field }}{{ $label := index (dict "in_reply_to" "In reply to" "like_of" "Liked" "repost_of" "Reposted") $field }}<p>{{ $label }}: <a class="u-{{ replace $field "_" "-" }}" href="{{ . }}">{{ . }}</a></p>{{ end }}
+{{ end }}
+{{ with .Params.syndication }}{{ $links := . }}{{ if not (reflect.IsSlice $links) }}{{ $links = slice $links }}{{ end }}<p>Also published on: {{ range $i, $link := $links }}{{ if $i }} · {{ end }}<a class="u-syndication" rel="syndication" href="{{ $link }}">{{ $link }}</a>{{ end }}</p>{{ end }}
+</aside>{{ end }}
+{{ with .Params.summary }}<span class="p-summary" hidden>{{ . }}</span>{{ end }}
+{{ with .Params.tags }}<span hidden>{{ range . }}<span class="p-category">{{ . }}</span>{{ end }}</span>{{ end }}

@@ -1,0 +1,4 @@
+{{ with site.Params.indieweb }}{{ $settings := . }}
+{{ range .relme }}<link rel="me" href="{{ . }}">{{ end }}
+{{ range $rel := slice "webmention" "authorization_endpoint" "token_endpoint" "micropub" "indieauth-metadata" }}{{ with index $settings $rel }}<link rel="{{ $rel }}" href="{{ . }}">{{ end }}{{ end }}
+{{ end }}

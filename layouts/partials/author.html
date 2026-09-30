@@ -1,0 +1,4 @@
+{{ $names := .Params.authors | default (slice (site.Params.author | default "")) }}
+{{ if not (reflect.IsSlice $names) }}{{ $names = slice $names }}{{ end }}
+{{ $url := site.Home.Permalink }}{{ with site.Params.indieweb.author_url }}{{ $url = . }}{{ end }}
+<p class="meta authors">{{ range $i, $name := $names }}{{ with $name }}{{ if $i }}, {{ end }}<a class="p-author h-card" href="{{ $url }}"><span class="p-name">{{ . }}</span></a>{{ end }}{{ end }}</p>

@@ -1,0 +1,2 @@
+{{ $images := .Page.Resources.Match (.Get "pattern" | default "*") }}
+{{ range $images }}{{ if eq .ResourceType "image" }}<figure><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="" loading="lazy" decoding="async"></figure>{{ end }}{{ end }}

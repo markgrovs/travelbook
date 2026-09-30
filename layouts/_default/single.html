@@ -1,0 +1,10 @@
+{{ define "main" }}{{ $entry := in (slice "posts" "cairns") .Section }}<article{{ if $entry }} class="h-entry"{{ end }}>
+<header class="article-header">{{ if in (slice "posts" "cairns") .Section }}{{ partial "meta.html" . }}{{ end }}<h1>{{ if $entry }}<a class="u-url u-uid{{ if .Title }} p-name{{ end }}" href="{{ .Permalink }}">{{ partial "title.html" . }}</a>{{ else }}{{ partial "title.html" . }}{{ end }}</h1>
+{{ if $entry }}{{ partial "author.html" . }}{{ end }}
+{{ with .Params.last_verified }}<p class="meta">Last verified: {{ . }}</p>{{ end }}
+{{ if .Draft }}<p class="draft">Draft preview</p>{{ end }}</header>
+{{ if .Params.toc }}<nav class="toc" aria-label="Contents">{{ .TableOfContents }}</nav>{{ end }}
+<div class="prose{{ if $entry }} e-content{{ end }}">{{ .Content }}</div>
+{{ if $entry }}{{ partial "entry-links.html" . }}{{ end }}
+{{ with .GetTerms "journeys" }}<aside class="related"><h2>Related journeys</h2><ul>{{ range . }}<li><a class="p-category" href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ul></aside>{{ end }}
+</article>{{ end }}

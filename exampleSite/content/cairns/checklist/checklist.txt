@@ -1,0 +1,3 @@
+PROTOTYPE CHECKLIST
+Inspect the sample component.
+Record the result.

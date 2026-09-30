@@ -1,0 +1,1 @@
+{{ $js := resources.Get "js/ambient-video.js" | fingerprint }}<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>

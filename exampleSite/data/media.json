@@ -1,0 +1,23 @@
+{
+  "media:landscape": {
+    "src": "media/5a58891b0fd82e58-1800.jpg",
+    "variants": [
+      "media/f5980e53fc7cdfe0-480.jpg",
+      "media/b601f2fbb82730ed-960.jpg",
+      "media/5a58891b0fd82e58-1800.jpg"
+    ]
+  },
+  "media:portrait": {
+    "src": "media/2ee29ee2de6fdbd8-960.jpg",
+    "variants": [
+      "media/64c1126d7adb8368-480.jpg",
+      "media/2ee29ee2de6fdbd8-960.jpg"
+    ]
+  },
+  "media:draft": {
+    "src": "media/d7d8f4af451642c8-480.jpg",
+    "variants": [
+      "media/d7d8f4af451642c8-480.jpg"
+    ]
+  }
+}

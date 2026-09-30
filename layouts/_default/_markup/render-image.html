@@ -1,0 +1,10 @@
+{{- $page := .Page -}}
+{{- $record := index (hugo.Data.media | default dict) .Destination -}}
+{{- $image := false -}}{{- $srcset := slice -}}
+{{- if $record -}}
+  {{- $image = resources.Get $record.src -}}
+  {{- range $record.variants -}}{{- $variant := resources.Get . -}}{{- if not $variant -}}{{ errorf "Missing media variant %s in %s" . $page.Path }}{{ else }}{{ $srcset = $srcset | append (printf "%s %dw" $variant.RelPermalink $variant.Width) }}{{ end }}{{ end -}}
+{{- else -}}{{- $image = .Page.Resources.GetMatch .Destination -}}{{- end -}}
+{{- if not $image -}}{{ errorf "Missing local image %s in %s" .Destination .Page.Path }}{{- else -}}
+<figure><img class="u-photo" src="{{ $image.RelPermalink }}" width="{{ $image.Width }}" height="{{ $image.Height }}" alt="{{ .PlainText }}"{{ with $srcset }} srcset="{{ delimit . ", " }}" sizes="(max-width: 35rem) calc(100vw - 2rem), (max-width: 51rem) calc(100vw - 3rem), 48rem"{{ end }}{{ if eq .Ordinal 0 }} loading="eager" fetchpriority="high"{{ else }} loading="lazy"{{ end }} decoding="async">{{ with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}</figure>
+{{- end -}}

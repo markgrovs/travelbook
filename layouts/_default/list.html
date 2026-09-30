@@ -1,0 +1,8 @@
+{{ define "main" }}<h1>{{ if eq .Section "posts" }}Journal{{ else }}{{ .Title }}{{ end }}</h1><div class="prose">{{ .Content }}</div>
+{{ if eq .Kind "taxonomy" }}<ul class="plain-list">{{ range .Pages }}{{ if .Pages }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}{{ end }}</ul>
+{{ else if eq .Kind "term" }}
+{{ $entries := (where .RegularPages "Section" "posts").ByDate }}
+{{ with $entries }}<nav class="journey-nav" aria-label="Journey"><a href="{{ (index . 0).RelPermalink }}">Start here</a><a href="{{ (index (last 1 .) 0).RelPermalink }}">Latest entry</a></nav>{{ partial "entries.html" . }}{{ end }}
+{{ with where .RegularPages "Section" "cairns" }}<h2>Related cairns</h2>{{ partial "entries.html" . }}{{ end }}
+{{ else }}{{ $pager := .Paginate .RegularPages.ByDate.Reverse }}{{ partial "entries.html" $pager.Pages }}
+{{ if gt $pager.TotalPages 1 }}<nav class="pagination" aria-label="Pagination">{{ with $pager.Prev }}<a href="{{ .URL }}">Newer entries</a>{{ end }}<span>{{ $pager.PageNumber }} / {{ $pager.TotalPages }}</span>{{ with $pager.Next }}<a href="{{ .URL }}">Older entries</a>{{ end }}</nav>{{ end }}{{ end }}{{ end }}

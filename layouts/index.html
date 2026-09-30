@@ -1,0 +1,14 @@
+{{ define "main" }}
+{{ with .Content }}<div class="welcome prose">{{ . }}</div>{{ else }}{{ with site.Params.introduction }}<p class="welcome">{{ . }}</p>{{ end }}{{ end }}
+<div class="h-feed">
+{{ $posts := (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+{{ range first 1 $posts }}
+<article class="dispatch latest h-entry">
+<header class="article-header">{{ partial "meta.html" . }}{{ partial "author.html" . }}<h1><a class="u-url u-uid{{ if .Title }} p-name{{ end }}" href="{{ .Permalink }}">{{ partial "title.html" . }}</a></h1>{{ if .Draft }}<p class="draft">Draft preview</p>{{ end }}</header>
+<div class="prose e-content">{{ .Content }}</div>
+{{ partial "entry-links.html" . }}
+</article>
+{{ end }}
+{{ with after 1 $posts }}<section class="older"><h2>Older dispatches</h2>{{ partial "entries.html" . }}</section>{{ end }}
+</div>
+{{ end }}

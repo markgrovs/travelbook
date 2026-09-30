@@ -1,0 +1,13 @@
+# Hugo output and check artifacts
+public/
+resources/
+cache/
+.checks/
+.hugo_build.lock
+
+# Local editor, OS, and Python artifacts
+.DS_Store
+__pycache__/
+*.py[cod]
+.vscode/
+.idea/

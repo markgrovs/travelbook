@@ -1,0 +1,14 @@
+{{- $src := .Get "src" -}}
+{{- $video := .Page.Resources.GetMatch $src -}}
+{{- if not $video }}{{ errorf "Missing local video %s in %s" $src .Page.Path }}{{ else -}}
+{{- $poster := false -}}
+{{- with .Get "poster" }}{{ $poster = $.Page.Resources.GetMatch . }}{{ if not $poster }}{{ errorf "Missing video poster %s in %s" . $.Page.Path }}{{ end }}{{ end -}}
+<figure class="ambient-media">
+<video class="travel-video u-video" autoplay loop muted playsinline controls preload="metadata" aria-label="{{ .Get "label" | default "Silent travel clip" }}"{{ with $poster }} poster="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}"{{ end }}>
+<source src="{{ $video.RelPermalink }}" type="video/mp4">
+<a href="{{ $video.RelPermalink }}">Open the video file</a>
+</video>
+{{ with .Get "caption" }}<figcaption>{{ . }}</figcaption>{{ end }}
+<figcaption class="video-note"><a href="{{ $video.RelPermalink }}">Open video</a> · Silent loop</figcaption>
+</figure>
+{{- end -}}

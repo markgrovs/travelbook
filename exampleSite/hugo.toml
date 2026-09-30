@@ -1,0 +1,32 @@
+baseURL = "https://prototype.invalid/"
+locale = "en-us"
+title = "Next Mountain Overland"
+theme = "travelbook"
+themesDir = "../.."
+layoutDir = "layouts"
+contentDir = "content"
+assetDir = "assets"
+dataDir = "data"
+staticDir = "static"
+resourceDir = "resources"
+publishDir = "public"
+disableKinds = ["sitemap"]
+[pagination]
+ pagerSize = 3
+[params]
+ prototype = true
+ author = "Mark and Valarie"
+ instagram = "https://instagram.com/nextmountainoverland"
+[taxonomies]
+ journey = "journeys"
+[permalinks.page]
+ posts = "/dispatches/:contentbasename/"
+[permalinks.section]
+ posts = "/dispatches/"
+[outputs]
+ home = ["HTML", "RSS"]
+ section = ["HTML", "RSS"]
+[markup.goldmark.parser]
+ wrapStandAloneImageWithinParagraph = false
+[markup.goldmark.renderer]
+ unsafe = false

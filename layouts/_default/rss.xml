@@ -1,0 +1,4 @@
+{{- $pages := where site.RegularPages "Section" "in" (slice "posts" "cairns") -}}
+{{- if not .IsHome }}{{ $pages = where .RegularPages "Section" "in" (slice "posts" "cairns") }}{{ end -}}
+{{- $pages = where (where $pages "Draft" false) "Params.fixture" "ne" true -}}
+<rss version="2.0"><channel><title>{{ site.Title }}{{ if not .IsHome }} · {{ .Title }}{{ end }}</title><link>{{ .Permalink }}</link><description>{{ site.Title }}</description>{{ range $pages.ByDate.Reverse }}<item><title>{{ partial "title.html" . }}</title><link>{{ .Permalink }}</link><guid>{{ .Permalink }}</guid><pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate><description>{{ .Content | html }}</description></item>{{ end }}</channel></rss>
