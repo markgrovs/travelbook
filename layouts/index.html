@@ -1,14 +1,27 @@
 {{ define "main" }}
+{{ $photos := site.Params.home_photos | default slice }}
+<section class="opening{{ if $photos }} with-photos{{ end }}" aria-labelledby="welcome-title">
+<div class="opening-copy"><p class="eyebrow">{{ site.Title }}</p><h1 id="welcome-title">{{ site.Params.home_heading | default "A journal of our travels" }}</h1>
 {{ with .Content }}<div class="welcome prose">{{ . }}</div>{{ else }}{{ with site.Params.introduction }}<p class="welcome">{{ . }}</p>{{ end }}{{ end }}
 <div class="h-feed">
 {{ $posts := (where site.RegularPages "Section" "posts").ByDate.Reverse }}
 {{ range first 1 $posts }}
-<article class="dispatch latest h-entry">
-<header class="article-header">{{ partial "meta.html" . }}{{ partial "author.html" . }}<h1><a class="u-url u-uid{{ if .Title }} p-name{{ end }}" href="{{ .Permalink }}">{{ partial "title.html" . }}</a></h1>{{ if .Draft }}<p class="draft">Draft preview</p>{{ end }}</header>
-<div class="prose e-content">{{ .Content }}</div>
-{{ partial "entry-links.html" . }}
-</article>
-{{ end }}
-{{ with after 1 $posts }}<section class="older"><h2>Older dispatches</h2>{{ partial "entries.html" . }}</section>{{ end }}
-</div>
+<article class="latest h-entry"><h2>Latest from the road</h2>
+{{ partial "meta.html" . }}{{ partial "author.html" . }}
+<h3><a class="u-url u-uid p-name" href="{{ .Permalink }}">{{ partial "title.html" . }}</a></h3>
+{{ if .Draft }}<p class="draft">Draft preview</p>{{ end }}
+<p class="p-summary">{{ .Summary | plainify | htmlUnescape | truncate 240 }}</p>
+<a class="read-entry" href="{{ .RelPermalink }}">Read entry <span aria-hidden="true">→</span></a>
+</article>{{ end }}</div></div>
+{{ with $photos }}<div class="notebook-photos">{{ range first 2 . }}
+{{ $photo := resources.Get .src }}{{ if not $photo }}{{ errorf "Missing homepage asset: %s" .src }}{{ else }}
+<figure><img src="{{ $photo.RelPermalink }}" width="{{ $photo.Width }}" height="{{ $photo.Height }}" alt="{{ .alt }}" decoding="async">{{ with .caption }}<figcaption>{{ . }}</figcaption>{{ end }}</figure>
+{{ end }}{{ end }}</div>{{ end }}
+</section>
+{{ $journeys := site.Taxonomies.journeys }}{{ $cairns := (where site.RegularPages "Section" "cairns").ByDate.Reverse }}
+{{ if or $journeys $cairns }}<div class="notebook-sections">
+{{ with $journeys }}<section><p class="eyebrow">Journeys</p><h2>Explore the journeys</h2><ol class="journey-list">{{ range .Alphabetical }}<li><a href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span aria-hidden="true">→</span></a></li>{{ end }}</ol></section>{{ end }}
+{{ with $cairns }}<section><p class="eyebrow">Cairns</p><h2>Notes &amp; learnings</h2>{{ partial "entries.html" (first 3 .) }}{{ with site.GetPage "/cairns" }}<a href="{{ .RelPermalink }}">All cairns <span aria-hidden="true">→</span></a>{{ end }}</section>{{ end }}
+</div>{{ end }}
+{{ with after 1 $posts }}<section class="older"><p class="eyebrow">Journal</p><h2>Earlier days</h2>{{ partial "entries.html" (first 5 .) }}{{ with site.GetPage "/posts" }}<a href="{{ .RelPermalink }}">All journal entries <span aria-hidden="true">→</span></a>{{ end }}</section>{{ end }}
 {{ end }}

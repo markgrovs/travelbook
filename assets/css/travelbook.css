@@ -1,11 +1,11 @@
 /* High-desert elements. System fonts keep the book independent of font services. */
 :root {
   color-scheme: light dark;
-  --paper: #f9f8f6;
-  --ink: #2b2a29;
+  --paper: #fbf7ed;
+  --ink: #14243a;
   --dust: #8e8a84;
-  --muted: #69655f;
-  --accent: #7a4328;
+  --muted: #586171;
+  --accent: #a63124;
   --serif: "Lora", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
   --border: var(--dust);
   --entry: var(--paper);
@@ -80,13 +80,80 @@ footer { border-top: 1px solid var(--dust); padding: 1.5rem 0 2.5rem; }
   .entries time { flex-basis: auto; }
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { color-scheme: dark; --paper: #242321; --ink: #ede9e3; --dust: #8e8a84; --muted: #bbb5ac; --accent: #d9a082; }
+  :root:not([data-theme="light"]) { color-scheme: dark; --paper: #17212b; --ink: #f4eddf; --dust: #8e8a84; --muted: #c4bcb0; --accent: #f2a18c; }
 }
 
 :root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"] { color-scheme: dark; --paper: #242321; --ink: #ede9e3; --dust: #8e8a84; --muted: #bbb5ac; --accent: #d9a082; }
+:root[data-theme="dark"] { color-scheme: dark; --paper: #17212b; --ink: #f4eddf; --dust: #8e8a84; --muted: #c4bcb0; --accent: #f2a18c; }
 
 .authors { margin: .6rem 0 0; }
 .authors a, .colophon a { color: inherit; text-decoration: none; }
 .authors a:hover, .colophon a:hover { text-decoration: underline; }
 .entry-links { font-size: .85rem; margin-top: 2rem; overflow-wrap: anywhere; }
+
+/* Field Notebook: a lasting welcome with small notes from the road. */
+.book { width: min(100% - 5rem, 76rem); }
+body { font-family: var(--serif); font-size: 1.125rem; }
+.masthead { align-items: center; border-bottom: 2px solid var(--accent); padding: 2.5rem 0 1.4rem; }
+.brand { max-width: none; font-size: clamp(1.9rem, 3.5vw, 3.5rem); font-weight: 700; letter-spacing: -.055em; }
+.byline { margin: .3rem 0 0; color: var(--accent); font: .9rem/1.5 ui-monospace, monospace; letter-spacing: .08em; }
+.masthead-tools { display: flex; flex-direction: column; align-items: flex-end; gap: .9rem; }
+.masthead nav { font-family: var(--sans); }
+.appearance { margin: 0; }
+.opening { padding: 3.5rem 0; }
+.opening:not(.with-photos) .opening-copy { display: grid; grid-template-columns: 1.1fr 1fr; column-gap: 5rem; align-items: start; }
+.opening:not(.with-photos) .opening-copy > .eyebrow { grid-column: 1; }
+.opening:not(.with-photos) h1 { grid-column: 1; }
+.opening:not(.with-photos) .welcome { grid-column: 1; }
+.opening:not(.with-photos) .opening-copy > .h-feed { grid-column: 2; grid-row: 1 / span 4; }
+.opening h1 { font-size: clamp(3rem, 6.5vw, 6rem); font-weight: 700; line-height: 1.02; letter-spacing: -.055em; margin: .5rem 0 1.5rem; max-width: 12ch; }
+.eyebrow { font: .72rem/1.5 ui-monospace, monospace; text-transform: uppercase; letter-spacing: .16em; color: var(--muted); margin: 0 0 1rem; }
+.welcome { font-size: 1.2rem; line-height: 1.6; margin-bottom: 2rem; }
+.with-photos { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3.5rem; }
+.latest { border-top: 2px solid var(--accent); padding-top: 1.25rem; }
+.latest h2 { font-size: 1.8rem; font-weight: 700; margin: 0 0 1rem; }
+.latest h3 { margin: .75rem 0; font-size: 1.35rem; font-weight: 700; }
+.latest h3 a { color: var(--ink); text-decoration: none; }
+.latest .authors { font-size: .8rem; }
+.latest .p-summary { margin: .75rem 0; line-height: 1.6; }
+.entry-date { font: .72rem/1.6 ui-monospace, monospace; }
+.read-entry { display: inline-block; margin-top: .35rem; }
+.notebook-photos { padding: 1rem 1rem 2rem; }
+.notebook-photos figure { margin: 0; background: var(--paper); padding: .65rem; border: 1px solid var(--dust); transform: rotate(-2deg); width: 90%; }
+.notebook-photos figure + figure { margin: -2rem 0 0 auto; transform: rotate(2deg); position: relative; }
+.notebook-photos img { border: 0; width: 100%; height: auto; }
+.notebook-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 3rem; border-top: 1px solid var(--dust); padding: 2.5rem 0; }
+.notebook-sections h2, .older h2 { font-size: clamp(1.8rem, 3vw, 2.7rem); font-weight: 700; letter-spacing: -.04em; margin: 0 0 1.25rem; }
+.journey-list { list-style: decimal-leading-zero; padding-left: 2rem; }
+.journey-list li { padding: .8rem 0 .8rem .5rem; border-bottom: 1px solid var(--dust); }
+.journey-list li::marker { color: var(--accent); font: .8rem ui-monospace, monospace; }
+.journey-list a { display: flex; justify-content: space-between; gap: 1rem; color: var(--ink); }
+.entries li { padding: .8rem 0; margin: 0; border-bottom: 1px solid var(--dust); }
+.entries a { font-size: 1.1rem; color: var(--ink); }
+.entries time { font-family: ui-monospace, monospace; }
+.older { margin-top: 0; padding-top: 2rem; max-width: 48rem; }
+.interior main { max-width: 54rem; margin: 3rem auto 5rem; }
+.interior .prose > p, .interior .prose > ul, .interior .prose > ol { max-width: 66ch; }
+.interior h1 { font-size: clamp(2.3rem, 5vw, 4rem); font-weight: 700; letter-spacing: -.04em; }
+.interior figure { margin: 2.5rem 0; }
+footer { border-top: 2px solid var(--accent); padding-block: 2rem; }
+footer nav { font-family: var(--sans); }
+.colophon { font-family: ui-monospace, monospace; letter-spacing: .08em; }
+a:hover { text-decoration: underline; }
+@media (max-width: 60rem) { .masthead { align-items: flex-start; flex-direction: column; gap: 1.5rem; } .masthead-tools { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; } .opening:not(.with-photos) .opening-copy { gap: 2rem; } .with-photos { gap: 2rem; } }
+@media (max-width: 42rem) {
+ .book { width: calc(100% - 2.5rem); }
+ .masthead { padding-top: 1.75rem; }
+ .masthead-tools { flex-wrap: wrap; gap: 1rem; }
+ .opening { padding: 2rem 0; }
+ .opening:not(.with-photos) .opening-copy, .with-photos { display: block; }
+ .opening h1 { font-size: clamp(3rem, 12vw, 4.5rem); }
+ .latest { margin-top: 2rem; }
+ .notebook-photos { margin-top: 2rem; max-width: 32rem; }
+ .notebook-sections { gap: 2rem; }
+ .entries li { flex-direction: column; gap: .25rem; }
+ .entries time { flex-basis: auto; }
+}
+
+/* Keep supplied captions clear of the next photograph. */
+.notebook-photos figure:has(figcaption) + figure { margin-top: 1rem; }

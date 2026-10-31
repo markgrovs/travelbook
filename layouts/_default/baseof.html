@@ -11,14 +11,15 @@
 {{ $appearance := resources.Get "js/appearance.js" | fingerprint }}<script src="{{ $appearance.RelPermalink }}" integrity="{{ $appearance.Data.Integrity }}"></script>
 {{ $css := resources.Get "css/travelbook.css" | fingerprint }}<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 </head>
-<body><a class="skip" href="#main">Skip to content</a>
+<body class="{{ if .IsHome }}home{{ else }}interior{{ end }}"><a class="skip" href="#main">Skip to content</a>
 <div class="book">
 <header class="masthead">
-<div class="masthead-title"><a class="brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>{{ with site.Params.tagline }}<p class="tagline">{{ . }}</p>{{ end }}</div>
+<div class="masthead-title"><a class="brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>{{ with site.Params.author }}<p class="byline">{{ . }}</p>{{ end }}{{ with site.Params.tagline }}<p class="tagline">{{ . }}</p>{{ end }}</div>
+<div class="masthead-tools">{{ partial "navigation.html" . }}
 <div class="appearance" role="group" aria-label="Appearance" hidden>
 <button type="button" data-appearance="light" aria-pressed="false">Light</button>
 <button type="button" data-appearance="dark" aria-pressed="false">Dark</button>
-</div>
+</div></div>
 </header>
 <main id="main">{{ block "main" . }}{{ end }}</main>
 <footer>
@@ -34,5 +35,5 @@
 {{ with site.Params.author }}<p class="colophon h-card"><a class="p-name u-url" rel="me" href="{{ site.Home.Permalink }}">{{ . }}</a></p>{{ end }}
 {{ if site.Params.prototype }}<p class="prototype">Local design prototype · sample entries are fixtures</p>{{ end }}
 </footer></div>
-{{ if .HasShortcode "ambient-video" }}{{ partial "video-script.html" . }}{{ else if .IsHome }}{{ range first 1 ((where site.RegularPages "Section" "posts").ByDate.Reverse) }}{{ if .HasShortcode "ambient-video" }}{{ partial "video-script.html" . }}{{ end }}{{ end }}{{ end }}
+{{ if .HasShortcode "ambient-video" }}{{ partial "video-script.html" . }}{{ end }}
 </body></html>

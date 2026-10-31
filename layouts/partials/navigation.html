@@ -1,0 +1,6 @@
+<nav aria-label="Main navigation">
+{{ with site.GetPage "/posts" }}<a href="{{ .RelPermalink }}">Journal</a>{{ end }}
+{{ with site.Taxonomies.journeys }}<a href="{{ "journeys/" | relURL }}">Journeys</a>{{ end }}
+{{ with site.GetPage "/cairns" }}{{ if .RegularPages }}<a href="{{ .RelPermalink }}">Cairns</a>{{ end }}{{ end }}
+{{ with site.GetPage "/about" }}<a href="{{ .RelPermalink }}">About</a>{{ end }}
+</nav>

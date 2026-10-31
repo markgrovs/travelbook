@@ -1,6 +1,6 @@
 # Travelbook
 
-A standalone Hugo theme for a personal chronicle. Warm alabaster paper, charcoal text, trail-dust rules, and clay links. A single-column homepage shows the latest journal entry in full, followed by older dispatches. Media stays inline at its natural proportions.
+A standalone Hugo theme for a personal travel journal. The Field Notebook design uses warm paper, navy ink, rust accents, expressive serif headings, visible navigation, and optional overlapping photographs. A stable welcome sits beside a compact latest-entry excerpt; journeys, recent cairns, and up to five earlier entries are derived from published content. Empty sections disappear. Entry pages and RSS retain the full text.
 
 Requires Hugo 0.166.0 or later. All theme templates, CSS, JavaScript, and example configuration live in this folder; no prototype files are required. Fonts use locally available Lora/Inter with Iowan/Palatino/Georgia and Helvetica fallbacks. No font service is contacted.
 
@@ -97,3 +97,16 @@ Optional site configuration (replace examples with your actual services; leave u
 Profile verification also requires the remote profile to link back to your site. Endpoint discovery is supported; hosting an IndieAuth, Webmention, or Micropub service is separate work. No third-party service is enabled automatically.
 
 The markup follows [h-entry](https://microformats.org/wiki/h-entry) and [rel-me](https://indieweb.org/rel-me); Webmention discovery follows the [W3C recommendation](https://www.w3.org/TR/webmention/).
+
+## Field Notebook homepage
+
+Optional site parameters: `home_heading` (defaults to “A journal of our travels”) and `home_photos` (up to two asset records with `src`, `alt`, and optional `caption`). Existing homepage body / `introduction` supplies the welcome. Photographs must be approved delivery assets under the consuming site's `assets/` directory, never private originals. They are not taken automatically from the latest entry, so the opening can remain stable between updates. No photographs are required; the text-only layout uses the welcome and latest note side by side on desktop, stacked on phones.
+
+```toml
+[[params.home_photos]]
+  src = "home/road.jpg"
+  alt = "Author-written description"
+  caption = "Optional author-written caption"
+```
+
+Missing configured photographs fail the build. Images retain their aspect ratios and dimensions; this interface does not generate publisher derivatives. The demo uses labeled synthetic fixtures. Obsidian routing for homepage photographs and new content destinations remains publisher integration work. Do not edit publisher-owned text to configure the theme.

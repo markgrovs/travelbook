@@ -30,3 +30,12 @@ disableKinds = ["sitemap"]
  wrapStandAloneImageWithinParagraph = false
 [markup.goldmark.renderer]
  unsafe = false
+
+[[params.home_photos]]
+ src = "media/5a58891b0fd82e58-1800.jpg"
+ alt = "Synthetic landscape color bands for layout testing"
+ caption = "Development fixture — landscape"
+[[params.home_photos]]
+ src = "media/2ee29ee2de6fdbd8-960.jpg"
+ alt = "Synthetic portrait color bands for layout testing"
+ caption = "Development fixture — portrait"
