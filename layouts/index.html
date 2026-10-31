@@ -1,27 +1,35 @@
 {{ define "main" }}
-{{ $photos := site.Params.home_photos | default slice }}
+{{ $welcome := partial "home-page.html" . }}
+{{ $photos := $welcome.Params.home_photos | default site.Params.home_photos | default slice }}
+{{ if $welcome.Params.fixture }}<p class="design-notice">Design preview · sample writing &amp; AI-generated illustrative photos</p>{{ end }}
 <section class="opening{{ if $photos }} with-photos{{ end }}" aria-labelledby="welcome-title">
-<div class="opening-copy"><p class="eyebrow">{{ site.Title }}</p><h1 id="welcome-title">{{ site.Params.home_heading | default "A journal of our travels" }}</h1>
-{{ with .Content }}<div class="welcome prose">{{ . }}</div>{{ else }}{{ with site.Params.introduction }}<p class="welcome">{{ . }}</p>{{ end }}{{ end }}
-<div class="h-feed">
-{{ $posts := (where site.RegularPages "Section" "posts").ByDate.Reverse }}
-{{ range first 1 $posts }}
-<article class="latest h-entry"><h2>Latest from the road</h2>
-{{ partial "meta.html" . }}{{ partial "author.html" . }}
-<h3><a class="u-url u-uid p-name" href="{{ .Permalink }}">{{ partial "title.html" . }}</a></h3>
-{{ if .Draft }}<p class="draft">Draft preview</p>{{ end }}
-<p class="p-summary">{{ .Summary | plainify | htmlUnescape | truncate 240 }}</p>
-<a class="read-entry" href="{{ .RelPermalink }}">Read entry <span aria-hidden="true">→</span></a>
+<div class="opening-copy"><h1 id="welcome-title">{{ site.Params.home_heading | default "A journal of our travels" }}</h1>
+{{ with $welcome.Content }}<div class="welcome prose">{{ . }}</div>{{ else }}{{ with site.Params.introduction }}<p class="welcome">{{ . }}</p>{{ end }}{{ end }}
+<div class="h-feed">{{ $posts := (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+{{ range first 1 $posts }}<article class="latest h-entry"><h2>Latest from the road</h2>
+{{ partial "meta.html" . }}
+{{ if .Params.fixture }}<p class="sample-label">Sample entry</p>{{ else if .Draft }}<p class="sample-label">Draft preview</p>{{ end }}
+<p class="p-summary">{{ .Summary | plainify | htmlUnescape | truncate 200 }}</p>
+<a class="read-entry u-url u-uid" href="{{ .RelPermalink }}" aria-label="Read entry: {{ partial "title.html" . }}">Read entry <span aria-hidden="true">→</span></a>
+<span class="visually-hidden p-name">{{ partial "title.html" . }}</span><div class="visually-hidden">{{ partial "author.html" . }}</div>
 </article>{{ end }}</div></div>
 {{ with $photos }}<div class="notebook-photos">{{ range first 2 . }}
-{{ $photo := resources.Get .src }}{{ if not $photo }}{{ errorf "Missing homepage asset: %s" .src }}{{ else }}
+{{ $photo := $welcome.Resources.GetMatch .src | default (resources.Get .src) }}{{ if not $photo }}{{ errorf "Missing homepage asset: %s" .src }}{{ else }}
 <figure><img src="{{ $photo.RelPermalink }}" width="{{ $photo.Width }}" height="{{ $photo.Height }}" alt="{{ .alt }}" decoding="async">{{ with .caption }}<figcaption>{{ . }}</figcaption>{{ end }}</figure>
 {{ end }}{{ end }}</div>{{ end }}
 </section>
-{{ $journeys := site.Taxonomies.journeys }}{{ $cairns := (where site.RegularPages "Section" "cairns").ByDate.Reverse }}
+{{ $journeys := slice }}{{ with site.GetPage "/journeys" }}{{ $journeys = .Pages.ByWeight }}{{ end }}
+{{ $cairns := (where site.RegularPages "Section" "cairns").ByDate.Reverse }}
 {{ if or $journeys $cairns }}<div class="notebook-sections">
-{{ with $journeys }}<section><p class="eyebrow">Journeys</p><h2>Explore the journeys</h2><ol class="journey-list">{{ range .Alphabetical }}<li><a href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span aria-hidden="true">→</span></a></li>{{ end }}</ol></section>{{ end }}
-{{ with $cairns }}<section><p class="eyebrow">Cairns</p><h2>Notes &amp; learnings</h2>{{ partial "entries.html" (first 3 .) }}{{ with site.GetPage "/cairns" }}<a href="{{ .RelPermalink }}">All cairns <span aria-hidden="true">→</span></a>{{ end }}</section>{{ end }}
+{{ with $journeys }}<section class="journeys-panel"><p class="eyebrow">Journey</p><h2>Explore the journey</h2><p class="section-intro">Trip introductions and daily entries.</p>
+<ol class="journey-list">{{ range $i, $page := first 4 . }}<li>
+{{ if eq $i 0 }}{{ partial "thumbnail.html" (dict "page" $page "class" "journey-thumbnail") }}{{ end }}
+<div><span class="journey-number">{{ printf "%02d" (add $i 1) }}</span>
+{{ if .Params.fixture }}<span class="sample-label">Sample journey</span>{{ end }}
+<a href="{{ .RelPermalink }}">{{ .Title }} <span aria-hidden="true">→</span></a></div></li>{{ end }}</ol>
+<a class="all-link" href="{{ "journeys/" | relURL }}">All journeys →</a></section>{{ end }}
+{{ with $cairns }}<section class="cairns-panel"><p class="eyebrow">Notes</p><h2>Notes &amp; learnings</h2><p class="section-intro">Reviews and things learned along the way.</p>
+<ul class="cairn-list">{{ range first 3 . }}<li>{{ partial "thumbnail.html" (dict "page" . "class" "cairn-thumbnail") }}<div><p class="eyebrow">{{ if .Params.fixture }}Sample note{{ else }}Cairn{{ end }}</p><a href="{{ .RelPermalink }}">{{ .Title }} <span aria-hidden="true">→</span></a></div></li>{{ end }}</ul>
+{{ with site.GetPage "/cairns" }}<a class="all-link" href="{{ .RelPermalink }}">All cairns →</a>{{ end }}</section>{{ end }}
 </div>{{ end }}
-{{ with after 1 $posts }}<section class="older"><p class="eyebrow">Journal</p><h2>Earlier days</h2>{{ partial "entries.html" (first 5 .) }}{{ with site.GetPage "/posts" }}<a href="{{ .RelPermalink }}">All journal entries <span aria-hidden="true">→</span></a>{{ end }}</section>{{ end }}
 {{ end }}

@@ -1,0 +1,4 @@
+{{- $page := site.Home -}}
+{{- with site.Params.home_preview_page }}{{ with site.GetPage . }}{{ $page = . }}{{ end }}{{ end -}}
+{{- with site.Params.home_page }}{{ with site.GetPage . }}{{ $page = . }}{{ end }}{{ end -}}
+{{- return $page -}}

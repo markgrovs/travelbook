@@ -1,4 +1,4 @@
-{{ define "main" }}<h1>{{ if eq .Section "posts" }}Journal{{ else }}{{ .Title }}{{ end }}</h1><div class="prose">{{ .Content }}</div>
+{{ define "main" }}<h1>{{ if eq .Section "posts" }}Journal{{ else }}{{ .Title }}{{ end }}</h1>{{ if .Params.location }}{{ partial "meta.html" . }}{{ end }}<div class="prose">{{ .Content }}</div>
 {{ if eq .Kind "taxonomy" }}<ul class="plain-list">{{ range .Pages }}{{ if .Pages }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}{{ end }}</ul>
 {{ else if eq .Kind "term" }}
 {{ $entries := (where .RegularPages "Section" "posts").ByDate }}

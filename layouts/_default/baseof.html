@@ -6,7 +6,10 @@
 <link rel="canonical" href="{{ .Permalink }}">
 <meta name="color-scheme" content="light dark">
 {{ partial "indieweb-head.html" . }}
-{{ if site.Params.prototype }}<meta name="robots" content="noindex, nofollow">{{ end }}
+{{ $preview := or site.Params.prototype .Draft .Params.fixture }}
+{{ if (partial "home-page.html" .).Params.fixture }}{{ $preview = true }}{{ end }}
+{{ if eq hugo.Environment "preview" }}{{ $preview = true }}{{ end }}
+{{ if $preview }}<meta name="robots" content="noindex, nofollow">{{ end }}
 {{ with .OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .Permalink }}">{{ end }}
 {{ $appearance := resources.Get "js/appearance.js" | fingerprint }}<script src="{{ $appearance.RelPermalink }}" integrity="{{ $appearance.Data.Integrity }}"></script>
 {{ $css := resources.Get "css/travelbook.css" | fingerprint }}<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
@@ -16,13 +19,12 @@
 <header class="masthead">
 <div class="masthead-title"><a class="brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>{{ with site.Params.author }}<p class="byline">{{ . }}</p>{{ end }}{{ with site.Params.tagline }}<p class="tagline">{{ . }}</p>{{ end }}</div>
 <div class="masthead-tools">{{ partial "navigation.html" . }}
-<div class="appearance" role="group" aria-label="Appearance" hidden>
-<button type="button" data-appearance="light" aria-pressed="false">Light</button>
-<button type="button" data-appearance="dark" aria-pressed="false">Dark</button>
-</div></div>
+</div>
 </header>
 <main id="main">{{ block "main" . }}{{ end }}</main>
-<footer>
+</div>
+<footer class="landscape-footer">{{ partial "landscape.html" . }}<div class="footer-inner">
+<a class="footer-brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
 <nav aria-label="Explore">
 {{ with site.GetPage "/posts" }}<a href="{{ .RelPermalink }}">Journal</a>{{ end }}
 {{ with site.Taxonomies.journeys }}<a href="{{ "journeys/" | relURL }}">Journeys</a>{{ end }}
@@ -34,6 +36,9 @@
 </nav>
 {{ with site.Params.author }}<p class="colophon h-card"><a class="p-name u-url" rel="me" href="{{ site.Home.Permalink }}">{{ . }}</a></p>{{ end }}
 {{ if site.Params.prototype }}<p class="prototype">Local design prototype · sample entries are fixtures</p>{{ end }}
-</footer></div>
+<div class="appearance" role="group" aria-label="Appearance" hidden>
+<button type="button" data-appearance="light" aria-pressed="false">Light</button>
+<button type="button" data-appearance="dark" aria-pressed="false">Dark</button>
+</div></div></footer>
 {{ if .HasShortcode "ambient-video" }}{{ partial "video-script.html" . }}{{ end }}
 </body></html>

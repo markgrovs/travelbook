@@ -1,0 +1,1 @@
+{{ with .page.Params.thumbnail }}{{ $image := $.page.Resources.GetMatch . }}{{ if not $image }}{{ errorf "Missing thumbnail %s in %s" . $.page.Path }}{{ else }}<img class="{{ $.class }}" src="{{ $image.RelPermalink }}" width="{{ $image.Width }}" height="{{ $image.Height }}" alt="" loading="lazy" decoding="async">{{ end }}{{ end }}

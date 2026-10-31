@@ -1,6 +1,7 @@
+{{ $location := partial "location-data.html" . }}
 <div class="entry-meta">
-<p class="entry-date"><time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006" }}</time></p>
-{{ $location := .Params.location | default .Params.place }}
-{{ if or $location (isset .Params "mileage") }}<p class="location">{{ with $location }}<span class="p-location">{{ . }}</span>{{ end }}{{ if isset .Params "mileage" }}{{ with $location }} <span aria-hidden="true">·</span> {{ end }}Mile {{ .Params.mileage }}{{ end }}</p>{{ end }}
+<p class="entry-date"><time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02" }}</time>{{ with $location.name }} <span class="p-location">{{ . }}</span>{{ end }}</p>
+{{ if $location.valid }}<p class="coordinates"><a href="https://www.openstreetmap.org/?mlat={{ $location.lat }}&amp;mlon={{ $location.long }}#map=12/{{ $location.lat }}/{{ $location.long }}">View location on map</a><span class="h-geo visually-hidden"><data class="p-latitude" value="{{ $location.lat }}">{{ $location.lat }}</data><data class="p-longitude" value="{{ $location.long }}">{{ $location.long }}</data></span></p>{{ end }}
+{{ if isset .Params "mileage" }}<p class="location">Mile {{ .Params.mileage }}</p>{{ end }}
 </div>
-{{ if .Lastmod.After .Date }}<p class="meta">Updated <time class="dt-updated" datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod.Format "January 2, 2006" }}</time></p>{{ end }}
+{{ if .Lastmod.After .Date }}<p class="meta">Updated <time class="dt-updated" datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod.Format "2006-01-02" }}</time></p>{{ end }}

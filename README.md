@@ -1,6 +1,6 @@
 # Travelbook
 
-A standalone Hugo theme for a personal travel journal. The Field Notebook design uses warm paper, navy ink, rust accents, expressive serif headings, visible navigation, and optional overlapping photographs. A stable welcome sits beside a compact latest-entry excerpt; journeys, recent cairns, and up to five earlier entries are derived from published content. Empty sections disappear. Entry pages and RSS retain the full text.
+A standalone Hugo theme for a personal travel journal. The Field Notebook design uses warm paper, navy ink, rust accents, expressive serif headings, visible navigation, and optional overlapping photographs. A stable welcome sits beside a compact latest-entry excerpt; up to four journeys and three recent cairns are derived from content. Empty sections disappear. Entry pages and RSS retain the full text.
 
 Requires Hugo 0.166.0 or later. All theme templates, CSS, JavaScript, and example configuration live in this folder; no prototype files are required. Fonts use locally available Lora/Inter with Iowan/Palatino/Georgia and Helvetica fallbacks. No font service is contacted.
 
@@ -32,7 +32,7 @@ mileage: 142
 ---
 ```
 
-Title is optional; the date is its fallback. `location` falls back to legacy `place`; mileage is optional. Bundle names determine URLs, independently of title. Optional `journeys: [stable-trip-id]` groups entries oldest first. Cairns use `content/cairns/`; About uses `content/about/index.md`. Root RSS contains published Journal and Cairns entries, excluding `fixture: true` and drafts.
+Title is optional; ISO date plus supplied location is its fallback. `location` falls back to legacy `place`; mileage is optional. Bundle names determine URLs, independently of title. Optional `journeys: [stable-trip-id]` groups entries oldest first. Cairns use `content/cairns/`; About uses `content/about/index.md`. Root RSS contains published Journal and Cairns entries, excluding `fixture: true` and drafts.
 
 ```markdown
 ![Author-written alt text](images/photo.jpg "Optional visible caption")
@@ -100,7 +100,7 @@ The markup follows [h-entry](https://microformats.org/wiki/h-entry) and [rel-me]
 
 ## Field Notebook homepage
 
-Optional site parameters: `home_heading` (defaults to “A journal of our travels”) and `home_photos` (up to two asset records with `src`, `alt`, and optional `caption`). Existing homepage body / `introduction` supplies the welcome. Photographs must be approved delivery assets under the consuming site's `assets/` directory, never private originals. They are not taken automatically from the latest entry, so the opening can remain stable between updates. No photographs are required; the text-only layout uses the welcome and latest note side by side on desktop, stacked on phones.
+Optional site parameters: `home_heading` (defaults to “A journal of our travels”) and `home_photos` (up to two asset records with `src`, `alt`, and optional `caption`). Existing homepage body / `introduction` supplies the welcome. Photographs must be approved delivery assets in the optional homepage bundle or the consuming site's `assets/` directory, never private originals. They are not taken automatically from the latest entry, so the opening can remain stable between updates. No photographs are required; the text-only layout keeps the latest note beneath the welcome, preserving the reading order.
 
 ```toml
 [[params.home_photos]]
@@ -110,3 +110,31 @@ Optional site parameters: `home_heading` (defaults to “A journal of our travel
 ```
 
 Missing configured photographs fail the build. Images retain their aspect ratios and dimensions; this interface does not generate publisher derivatives. The demo uses labeled synthetic fixtures. Obsidian routing for homepage photographs and new content destinations remains publisher integration work. Do not edit publisher-owned text to configure the theme.
+
+
+### Complete homepage composition
+
+`params.home_page` may name a headless homepage bundle. Its Markdown body supplies the introduction and `home_photos` lists up to two bundle resources with alt text and optional captions. If that page is absent (for example, a draft bundle in a production build), the normal homepage body/settings apply. Fixture homepage bundles produce a visible design-review notice and noindex metadata. Ordinary homepages do not.
+
+The latest Journal excerpt always follows the welcome. On desktop the opening photos occupy the right column; on phones they follow the latest note. The lower row presents up to four Journey terms sorted by weight/title, with the first as the featured trip, and three Cairns sorted newest first. Optional `thumbnail: photo.jpg` resolves a resource in the corresponding Journey or Cairn bundle. Missing configured thumbnails fail builds; omitted thumbnails leave text-only rows. Decorative thumbnails have empty alt text because the adjacent link identifies the destination. The Journal archive remains reachable through navigation. Appearance controls live in the landscape footer.
+
+## Journal location metadata
+
+Use these YAML properties for Journal entries and Cairns; Journey introductions can carry the same location context. Coordinates and labels are supplied by the authoring workflow. The theme performs no geocoding or device capture.
+
+```yaml
+---
+date: 2026-10-31
+lat: 34.20
+long: -90.57
+location: "Clarksdale, MS"
+journeys: [fall-motorcycle-trip-florida]
+draft: true
+---
+```
+
+Coordinates in this example and the design fixtures are approximate illustrative values, not captured travel positions. `lat` and `long` are decimal degrees, with negative longitude west of Greenwich. Latitude must be within -90..90 and longitude within -180..180. Supply both together; zero is valid. Empty properties are accepted while composing a draft. Existing content without coordinates remains compatible. `location` is the supplied display label; the theme does not infer it from coordinates. Legacy `place` remains a fallback.
+
+Omit `title` for daily notes: the heading becomes `YYYY-MM-DD location`, consistently on the entry, Journal/Journey lists, browser title, and RSS. With no place label, the fallback is the ISO date. A deliberately supplied title still wins for longer narratives and Cairns, whose date/location metadata remains visible. Stable filenames continue to determine URLs. Entry metadata uses an ISO date followed by the location. Coordinates power a normal OpenStreetMap link and h-geo markup, without embedding a live map or making a lookup request.
+
+`journeys` is a list of stable Journey identifiers; Journal entries and Cairns can belong to the same trip. Lists are generated automatically. The local archetypes provide the properties but do not install an Obsidian template. Capture tools and publisher integration remain separate work; this change defines the data contract expected by the site.

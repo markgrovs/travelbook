@@ -1,1 +1,1 @@
-{{- if .Title -}}{{ .Title }}{{- else -}}{{ .Date.Format "January 2, 2006" }}{{- end -}}
+{{- if .Title -}}{{ .Title }}{{- else -}}{{ .Date.Format "2006-01-02" }}{{ with .Params.location | default .Params.place }} {{ . }}{{ end }}{{- end -}}
