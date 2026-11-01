@@ -125,6 +125,19 @@ def main():
         require({item.findtext('title') for item in items} == {'First title','Guide'}, 'RSS membership wrong')
         for feed in ('dispatches/index.xml','cairns/index.xml'):
             require(len(ET.parse(single/feed).findall('./channel/item')) == 1, 'Section feed wrong')
+        # Explicit UTC updates cross calendar days and DST offsets in Colorado.
+        original_note = note.read_text()
+        config_file = site/'hugo.toml'
+        config_file.write_text(config_file.read_text().replace('[params]', '[params]\ndate_timezone = "America/Denver"'))
+        for stamp, expected in (('2026-11-01T01:41:38Z', '2026-10-31T19:41:38-06:00'),
+                                ('2026-12-01T01:41:38Z', '2026-11-30T18:41:38-07:00')):
+            note.write_text(original_note.replace('lastmod: 2026-01-02', 'lastmod: '+stamp))
+            zone_output = work/'timezone'
+            run(args.hugo, site, config_file, zone_output)
+            html = (zone_output/'dispatches/stable-name/index.html').read_text()
+            require(f'class="dt-updated" datetime="{expected}">{expected[:10]}</time>' in html,
+                    'Update timestamp did not convert to configured timezone')
+        note.write_text(original_note)
         note.write_text(note.read_text().replace('First title','Changed title'))
         renamed = work/'renamed';run(args.hugo,site,site/'hugo.toml',renamed)
         require((renamed/'dispatches/stable-name/index.html').is_file(), 'Title edit changed address')

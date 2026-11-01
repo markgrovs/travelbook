@@ -4,4 +4,6 @@
 {{ if $location.valid }}<p class="coordinates"><a href="https://www.openstreetmap.org/?mlat={{ $location.lat }}&amp;mlon={{ $location.long }}#map=12/{{ $location.lat }}/{{ $location.long }}">View location on map</a><span class="h-geo visually-hidden"><data class="p-latitude" value="{{ $location.lat }}">{{ $location.lat }}</data><data class="p-longitude" value="{{ $location.long }}">{{ $location.long }}</data></span></p>{{ end }}
 {{ if isset .Params "mileage" }}<p class="location">Mile {{ .Params.mileage }}</p>{{ end }}
 </div>
-{{ if .Lastmod.After .Date }}<p class="meta">Updated <time class="dt-updated" datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod.Format "2006-01-02" }}</time></p>{{ end }}
+{{ $updated := .Lastmod }}
+{{ with site.Params.date_timezone }}{{ $updated = time.In . $updated }}{{ end }}
+{{ if .Lastmod.After .Date }}<p class="meta">Updated <time class="dt-updated" datetime="{{ $updated.Format "2006-01-02T15:04:05Z07:00" }}">{{ $updated.Format "2006-01-02" }}</time></p>{{ end }}
