@@ -18,11 +18,11 @@
 <figure><img src="{{ $photo.RelPermalink }}" width="{{ $photo.Width }}" height="{{ $photo.Height }}" alt="{{ .alt }}" decoding="async">{{ with .caption }}<figcaption>{{ . }}</figcaption>{{ end }}</figure>
 {{ end }}{{ end }}</div>{{ end }}
 </section>
-{{ $journeys := slice }}{{ with site.GetPage "/journeys" }}{{ $journeys = .Pages.ByWeight }}{{ end }}
+{{ $journeys := slice }}{{ with site.GetPage "/journeys" }}{{ $journeys = .Pages.ByDate.Reverse }}{{ end }}
 {{ $cairns := (where site.RegularPages "Section" "cairns").ByDate.Reverse }}
 {{ if or $journeys $cairns }}<div class="notebook-sections">
 {{ with $journeys }}<section class="journeys-panel"><p class="eyebrow">Journey</p><h2>Explore the journey</h2><p class="section-intro">Trip introductions and daily entries.</p>
-<ol class="journey-list">{{ range $i, $page := first 4 . }}<li>
+<ol class="journey-list">{{ range $i, $page := . }}<li>
 {{ if eq $i 0 }}{{ partial "thumbnail.html" (dict "page" $page "class" "journey-thumbnail") }}{{ end }}
 <div><span class="journey-number">{{ printf "%02d" (add $i 1) }}</span>
 {{ if .Params.fixture }}<span class="sample-label">Sample journey</span>{{ end }}

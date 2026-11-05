@@ -108,9 +108,21 @@ def main():
         (content/'contact.md').write_text('---\ntitle: Contact\n---\nStructural page.')
         cairn = content/'cairns/guide';cairn.mkdir(parents=True)
         (cairn/'index.md').write_text('---\ntitle: Guide\ndate: 2026-01-01\n---\nGuide body.')
+        # Unlinked introductions must remain discoverable, beyond four, regardless of weight.
+        for number in range(1, 7):
+            intro = content/f'journeys/trip-{number}'
+            intro.mkdir(parents=True)
+            (intro/'_index.md').write_text(f'---\ntitle: Trip {number}\ndate: 2026-01-0{number}\nweight: {number}\nauthors: [Journey Author]\nlastmod: 2026-02-01\n---\nTrip introduction.')
         single = work/'single';run(args.hugo,site,site/'hugo.toml',single)
         audit_links(single)
         single_home = (single/'index.html').read_text()
+        for listing in (single_home, (single/'journeys/index.html').read_text()):
+            positions = [listing.index(f'href="/journeys/trip-{n}/"') for n in range(6, 0, -1)]
+            require(positions == sorted(positions), 'Journey list omitted unlinked trips or ignored date ordering')
+        intro_html = (single/'journeys/trip-6/index.html').read_text()
+        require('Journey Author' in intro_html and '2026-01-06</time>' in intro_html
+                and '2026-02-01</time>' in intro_html, 'Journey author/date/update metadata missing')
+
         parsed = Page((single/'dispatches/stable-name/index.html').read_text())
         classes = {name for _, attrs in parsed.elements for name in attrs.get('class', '').split()}
         require({'h-entry','p-name','u-url','u-uid','dt-published','dt-updated','e-content','p-author','h-card','p-location','p-summary','p-category','u-syndication','u-in-reply-to','u-like-of','u-repost-of'} <= classes, 'IndieWeb entry fields missing')

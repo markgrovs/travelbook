@@ -140,3 +140,7 @@ Omit `title` for daily notes: the heading becomes `YYYY-MM-DD location`, consist
 `journeys` is a list of stable Journey identifiers; Journal entries and Cairns can belong to the same trip. Lists are generated automatically. The local archetypes provide the properties but do not install an Obsidian template. Capture tools and publisher integration remain separate work; this change defines the data contract expected by the site.
 
 Set `params.date_timezone` to an IANA timezone such as `America/Denver` to display update timestamps in that zone, including timestamps supplied by Git. Set Hugo’s top-level `timeZone` for parsing dates without an explicit offset. Publication dates retain their authored calendar date.
+
+### Journey discovery and metadata
+
+The homepage and Journeys archive list all Journeys by date, newest first, ignoring weight. Introductions are visible before any daily entries are linked; entries within a Journey remain oldest first. Journey introductions display `authors` (with the site author fallback), their authored date, and the existing last-updated metadata. Undated introductions omit date metadata. To derive updates from Git, enable `enableGitInfo` in the consuming site and configure `[frontmatter] lastmod = ["lastmod", ":git", "date", "publishDate"]`. Git timestamps reflect repository changes, not first public deployment.
