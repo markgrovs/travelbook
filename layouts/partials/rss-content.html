@@ -1,0 +1,21 @@
+{{- $body := .Content -}}
+{{- $base := urls.Parse .Permalink -}}
+{{- /* Resolve rendered attributes against the article, not the feed's directory.
+      Restrict replacements to tags so code samples remain untouched. */ -}}
+{{- range findRE `<[^>]+>` $body -}}
+  {{- $tag := . -}}
+  {{- range findRE `\b(?:href|src|poster)="[^"]*"` $tag -}}
+    {{- $attribute := replaceRE `=.*$` "" . -}}
+    {{- $value := replaceRE `^[^=]+="(.*)"$` "$1" . | htmlUnescape -}}
+    {{- $url := urls.Parse $value -}}
+    {{- if not $url.IsAbs -}}
+      {{- $absolute := $base.ResolveReference $url -}}
+      {{- $tag = replace $tag . (printf `%s="%s"` $attribute ($absolute.String | htmlEscape)) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $body = replace $body . $tag -}}
+{{- end -}}
+{{ $body | safeHTML }}
+<hr>
+<p>{{ site.Params.rss_footer | default "Thanks for reading and keeping RSS alive." }}</p>
+<p><a href="{{ .Permalink }}">Read this post on {{ site.Title }}</a>{{ with site.GetPage "/follow" }} · <a href="{{ .Permalink }}">Follow via RSS</a>{{ end }}</p>

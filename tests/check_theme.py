@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
+from email.utils import parsedate_to_datetime
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -137,6 +138,70 @@ def main():
         require({item.findtext('title') for item in items} == {'First title','Guide'}, 'RSS membership wrong')
         for feed in ('dispatches/index.xml','cairns/index.xml'):
             require(len(ET.parse(single/feed).findall('./channel/item')) == 1, 'Section feed wrong')
+        # Reader-facing RSS: full content, XML escaping, footer, and portable links/media.
+        rss_site = work/'rss-site'
+        shutil.copytree(site, rss_site)
+        rss_config = rss_site/'hugo.toml'
+        rss_config.write_text(rss_config.read_text().replace('title = "The Passage"', 'title = "Roads & Rivers"')
+                              .replace('[params]', '[params]\nrss_footer = "Thanks for keeping RSS alive. — Mark & Valarie"'))
+        rss_note = rss_site/'content/posts/stable-name/index.md'
+        rss_note.write_text(note.read_text().replace('title: First title', 'title: "Roads & rivers <a story>"')
+                            .replace('authors: [Test Author]', 'authors: ["Mark & Valarie"]')
+                            + '\n## Route\n\n![Route & river](photo.png "Map & notes")\n\n'
+                            '[Download](notes.txt?x=1&y=2) · [Jump](#route) · [Contact](/contact/)\n')
+        shutil.copyfile(EXAMPLE/'content/cairns/checklist/images/diagram.png', rss_note.parent/'photo.png')
+        (rss_note.parent/'notes.txt').write_text('Route notes')
+        for slug, fields in [('draft-rss', 'draft: true'), ('fixture-rss', 'fixture: true'),
+                             ('future-rss', 'date: 2999-01-01')]:
+            (rss_site/f'content/posts/{slug}.md').write_text(f'---\ntitle: {slug}\n{fields}\n---\nExcluded.')
+        for name, flags in [('rss-production', ()), ('rss-preview', ('--buildDrafts', '--buildFuture', '--minify'))]:
+            rss_out = work/name
+            run(args.hugo, rss_site, rss_config, rss_out, flags)
+            for feed_path in ('index.xml', 'dispatches/index.xml', 'cairns/index.xml'):
+                channel = ET.parse(rss_out/feed_path).find('channel')
+                require('Roads & Rivers' in channel.findtext('title'), 'RSS channel escaping incorrect')
+                self_link = channel.find('{http://www.w3.org/2005/Atom}link')
+                require(self_link is not None and self_link.attrib == {
+                    'href': 'https://example.org/'+feed_path, 'rel': 'self', 'type': 'application/rss+xml'},
+                    'RSS self-link missing or incorrect')
+                feed_items = channel.findall('item')
+                require(all(i.findtext('title') not in {'draft-rss','fixture-rss','future-rss'} for i in feed_items),
+                        'Unpublished content leaked into RSS')
+                for item in feed_items:
+                    require(parsedate_to_datetime(item.findtext('pubDate')).tzinfo is not None, 'RSS date lacks timezone')
+                    body = item.findtext('description')
+                    require(body == item.findtext('{http://purl.org/rss/1.0/modules/content/}encoded'),
+                            'Readers receive different full-post content')
+                    require(body.count('Thanks for keeping RSS alive.') == 1, 'RSS footer absent or duplicated')
+                    require('Follow via RSS' not in body, 'Missing Follow page linked in RSS')
+                    if item.findtext('link').endswith('/stable-name/'):
+                        require(item.findtext('title') == 'Roads & rivers <a story>', 'RSS title double escaped')
+                        require(item.findtext('{http://purl.org/dc/elements/1.1/}creator') == 'Mark & Valarie',
+                                'RSS author escaping incorrect')
+                        require('Opening paragraph.' in body and 'Complete trailing paragraph.' in body,
+                                'RSS truncated at excerpt break')
+                        require('<p>Opening paragraph.</p>' in body, 'RSS HTML not decoded correctly')
+                        require('Map &amp; notes' in body, 'Image caption missing from RSS')
+                        parsed_feed = Page(body)
+                        require(parsed_feed.images[0]['src'] == 'https://example.org/dispatches/stable-name/photo.png',
+                                'RSS image URL not portable')
+                        for link in ('https://example.org/dispatches/stable-name/notes.txt?x=1&y=2',
+                                     'https://example.org/dispatches/stable-name/#route', 'https://example.org/contact/'):
+                            require(link in parsed_feed.links, f'RSS link not portable: {link}')
+            require('Thanks for keeping RSS alive.' not in (rss_out/'dispatches/stable-name/index.html').read_text(),
+                    'RSS footer leaked into article HTML')
+        (rss_site/'content/follow.md').write_text('---\ntitle: Follow via RSS\n---\nSubscribe here.')
+        rss_follow = work/'rss-follow'
+        run(args.hugo, rss_site, rss_config, rss_follow)
+        follow_body = ET.parse(rss_follow/'index.xml').findtext('./channel/item/description')
+        require('https://example.org/follow/' in follow_body, 'Authored Follow page missing from RSS footer')
+        article_html = (rss_follow/'dispatches/stable-name/index.html').read_text()
+        article_links = Page(article_html)
+        require(any(tag == 'link' and attrs.get('rel') == 'alternate'
+                    and attrs.get('type') == 'application/rss+xml'
+                    and attrs.get('href') == 'https://example.org/index.xml'
+                    for tag, attrs in article_links.elements), 'Article does not advertise the main RSS feed')
+        require('/follow/' in article_links.links, 'Authored Follow page missing from site navigation')
         # Explicit UTC updates cross calendar days and DST offsets in Colorado.
         original_note = note.read_text()
         config_file = site/'hugo.toml'

@@ -10,7 +10,7 @@
 {{ if (partial "home-page.html" .).Params.fixture }}{{ $preview = true }}{{ end }}
 {{ if eq hugo.Environment "preview" }}{{ $preview = true }}{{ end }}
 {{ if $preview }}<meta name="robots" content="noindex, nofollow">{{ end }}
-{{ with .OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .Permalink }}">{{ end }}
+{{ with site.Home.OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .Permalink }}">{{ end }}
 {{ $appearance := resources.Get "js/appearance.js" | fingerprint }}<script src="{{ $appearance.RelPermalink }}" integrity="{{ $appearance.Data.Integrity }}"></script>
 {{ $css := resources.Get "css/travelbook.css" | fingerprint }}<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 </head>
@@ -32,7 +32,7 @@
 {{ with site.GetPage "/about" }}<a href="{{ .RelPermalink }}">About</a>{{ end }}
 {{ with site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">Contact</a>{{ end }}
 {{ with site.Params.instagram }}<a rel="me" href="{{ . }}">Instagram</a>{{ end }}
-{{ with site.Home.OutputFormats.Get "RSS" }}<a href="{{ .RelPermalink }}">RSS</a>{{ end }}
+{{ with site.GetPage "/follow" }}<a href="{{ .RelPermalink }}">Follow via RSS</a>{{ else }}{{ with site.Home.OutputFormats.Get "RSS" }}<a href="{{ .RelPermalink }}">RSS</a>{{ end }}{{ end }}
 </nav>
 {{ with site.Params.author }}<p class="colophon h-card"><a class="p-name u-url" rel="me" href="{{ site.Home.Permalink }}">{{ . }}</a></p>{{ end }}
 {{ if site.Params.prototype }}<p class="prototype">Local design prototype · sample entries are fixtures</p>{{ end }}

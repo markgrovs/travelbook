@@ -1,4 +1,28 @@
 {{- $pages := where site.RegularPages "Section" "in" (slice "posts" "cairns") -}}
 {{- if not .IsHome }}{{ $pages = where .RegularPages "Section" "in" (slice "posts" "cairns") }}{{ end -}}
-{{- $pages = where (where $pages "Draft" false) "Params.fixture" "ne" true -}}
-<rss version="2.0"><channel><title>{{ site.Title }}{{ if not .IsHome }} · {{ .Title }}{{ end }}</title><link>{{ .Permalink }}</link><description>{{ site.Title }}</description>{{ range $pages.ByDate.Reverse }}<item><title>{{ partial "title.html" . }}</title><link>{{ .Permalink }}</link><guid>{{ .Permalink }}</guid><pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate><description>{{ .Content | html }}</description></item>{{ end }}</channel></rss>
+{{- $pages = where (where (where $pages "Draft" false) "Params.fixture" "ne" true) "PublishDate" "le" now -}}
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>{{ site.Title | html }}{{ if not .IsHome }} · {{ .Title | html }}{{ end }}</title>
+  <link>{{ .Permalink | html }}</link>
+  <description>{{ printf "Full posts from %s" site.Title | html }}</description>
+  <language>{{ site.Language.Locale | html }}</language>
+  {{ with .OutputFormats.Get "RSS" }}<atom:link href="{{ .Permalink | html }}" rel="self" type="application/rss+xml" />{{ end }}
+  {{ with $pages.ByLastmod.Reverse }}{{ with index . 0 }}{{ if not .Lastmod.IsZero }}<lastBuildDate>{{ .Lastmod.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</lastBuildDate>{{ end }}{{ end }}{{ end }}
+  {{ range $pages.ByDate.Reverse }}
+  {{ $body := partial "rss-content.html" . }}
+  <item>
+    <title>{{ partial "title.html" . | htmlUnescape | html }}</title>
+    <link>{{ .Permalink | html }}</link>
+    <guid isPermaLink="true">{{ .Permalink | html }}</guid>
+    {{ if not .PublishDate.IsZero }}<pubDate>{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>{{ end }}
+    {{ $names := .Params.authors | default (slice (site.Params.author | default "")) }}
+    {{ if not (reflect.IsSlice $names) }}{{ $names = slice $names }}{{ end }}
+    {{ range $names }}{{ with . }}<dc:creator>{{ . | html }}</dc:creator>{{ end }}{{ end }}
+    <description>{{ $body | html }}</description>
+    <content:encoded>{{ $body | html }}</content:encoded>
+  </item>
+  {{ end }}
+</channel>
+</rss>

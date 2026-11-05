@@ -146,3 +146,9 @@ Set `params.date_timezone` to an IANA timezone such as `America/Denver` to displ
 The homepage and Journeys archive list all Journeys by date, newest first, ignoring weight. Introductions are visible before any daily entries are linked; entries within a Journey remain oldest first. Journey introductions display `authors` (with the site author fallback), their authored date, and the existing last-updated metadata. Undated introductions omit date metadata. To derive updates from Git, enable `enableGitInfo` in the consuming site and configure `[frontmatter] lastmod = ["lastmod", ":git", "date", "publishDate"]`. Git timestamps reflect repository changes, not first public deployment.
 
 Journal, Cairn, and Journey headers share a compact byline beneath the title, readable calendar dates, and a quieter update date. Location, map links, mileage, and verification details occupy an optional secondary line. On small screens the update date wraps below the byline; machine-readable dates and author microformats are preserved.
+
+### Full-post RSS
+
+The main feed includes published Journal and Cairn entries; section feeds restrict that selection to their section. Drafts, fixtures, and future publications stay out even in preview builds. Each item contains the complete rendered article (including content after `<!--more-->`) in both `description` and `content:encoded`, with XML-safe titles and author names. Rendered image, download, and fragment links resolve against the article URL so readers can open them outside the site. Feeds include a self-link, language, publication dates, and Dublin Core author names.
+
+An RSS-only footer thanks subscribers and links to the original post. Set `params.rss_footer` to customize its plain text. When a `/follow/` page exists, the feed footer and site footer link to it automatically. Every HTML page advertises the main feed for reader discovery. The theme does not generate the authored Follow page.
