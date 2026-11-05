@@ -144,3 +144,5 @@ Set `params.date_timezone` to an IANA timezone such as `America/Denver` to displ
 ### Journey discovery and metadata
 
 The homepage and Journeys archive list all Journeys by date, newest first, ignoring weight. Introductions are visible before any daily entries are linked; entries within a Journey remain oldest first. Journey introductions display `authors` (with the site author fallback), their authored date, and the existing last-updated metadata. Undated introductions omit date metadata. To derive updates from Git, enable `enableGitInfo` in the consuming site and configure `[frontmatter] lastmod = ["lastmod", ":git", "date", "publishDate"]`. Git timestamps reflect repository changes, not first public deployment.
+
+Journal, Cairn, and Journey headers share a compact byline beneath the title, readable calendar dates, and a quieter update date. Location, map links, mileage, and verification details occupy an optional secondary line. On small screens the update date wraps below the byline; machine-readable dates and author microformats are preserved.

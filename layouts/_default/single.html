@@ -1,8 +1,9 @@
 {{ define "main" }}{{ $entry := in (slice "posts" "cairns") .Section }}<article{{ if $entry }} class="h-entry"{{ end }}>
-<header class="article-header">{{ if and $entry .Title }}{{ partial "meta.html" . }}{{ end }}<h1>{{ if $entry }}<a class="u-url u-uid p-name" href="{{ .Permalink }}">{{ partial "title.html" . }}</a>{{ else }}{{ partial "title.html" . }}{{ end }}</h1>
-{{ if $entry }}{{ if not .Title }}<div class="titleless-meta">{{ partial "meta.html" . }}</div>{{ end }}{{ partial "author.html" . }}{{ end }}
-{{ with .Params.last_verified }}<p class="meta">Last verified: {{ . }}</p>{{ end }}
-{{ if .Draft }}<p class="draft">Draft preview</p>{{ end }}</header>
+<header class="article-header">
+{{ if $entry }}<div class="article-kicker"><span>{{ if eq .Section "posts" }}Journal{{ else }}Cairn{{ end }}</span>{{ if .Draft }}<span class="article-draft">Draft preview</span>{{ end }}</div>{{ end }}
+<h1>{{ if $entry }}<a class="u-url u-uid p-name" href="{{ .Permalink }}">{{ partial "title.html" . }}</a>{{ else }}{{ partial "title.html" . }}{{ end }}</h1>
+{{ if $entry }}{{ partial "article-meta.html" . }}{{ else }}{{ with .Params.last_verified }}<p class="meta">Last verified: {{ . }}</p>{{ end }}{{ if .Draft }}<p class="draft">Draft preview</p>{{ end }}{{ end }}
+</header>
 {{ if .Params.toc }}<nav class="toc" aria-label="Contents">{{ .TableOfContents }}</nav>{{ end }}
 <div class="prose{{ if $entry }} e-content{{ end }}">{{ .Content }}</div>
 {{ if $entry }}{{ partial "entry-links.html" . }}{{ end }}

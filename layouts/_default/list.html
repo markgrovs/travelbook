@@ -1,7 +1,12 @@
-{{ define "main" }}<h1>{{ if eq .Section "posts" }}Journal{{ else }}{{ .Title }}{{ end }}</h1>{{ if and (eq .Section "journeys") (eq .Kind "term") }}
-{{ if not .Date.IsZero }}{{ partial "meta.html" . }}{{ end }}{{ partial "author.html" . }}
-{{ if .Draft }}<p class="draft">Draft preview</p>{{ end }}
-{{ else if .Params.location }}{{ partial "meta.html" . }}{{ end }}<div class="prose">{{ .Content }}</div>
+{{ define "main" }}
+{{ if and (eq .Section "journeys") (eq .Kind "term") }}
+<header class="article-header">
+<div class="article-kicker"><span>Journey</span>{{ if .Draft }}<span class="article-draft">Draft preview</span>{{ end }}</div>
+<h1>{{ .Title }}</h1>
+{{ partial "article-meta.html" . }}
+</header>
+{{ else }}<h1>{{ if eq .Section "posts" }}Journal{{ else }}{{ .Title }}{{ end }}</h1>{{ if .Params.location }}{{ partial "meta.html" . }}{{ end }}{{ end }}
+<div class="prose">{{ .Content }}</div>
 {{ if eq .Kind "taxonomy" }}<ul class="plain-list">{{ $terms := .Pages }}{{ if eq .Section "journeys" }}{{ $terms = $terms.ByDate.Reverse }}{{ end }}{{ range $terms }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>{{ end }}</ul>
 {{ else if eq .Kind "term" }}
 {{ $entries := (where .RegularPages "Section" "posts").ByDate }}

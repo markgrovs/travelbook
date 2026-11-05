@@ -1,0 +1,15 @@
+{{ $location := partial "location-data.html" . }}
+{{ $updated := .Lastmod }}{{ with site.Params.date_timezone }}{{ $updated = time.In . $updated }}{{ end }}
+<div class="article-details">
+  {{ if or .Params.authors site.Params.author }}<div class="article-byline"><span>By</span>{{ partial "author.html" . }}</div>{{ end }}
+  {{ if not .Date.IsZero }}<p class="article-date"><span class="visually-hidden">Published </span><time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "Jan 2, 2006" }}</time></p>{{ end }}
+  {{ if and (not .Date.IsZero) (.Lastmod.After .Date) }}<p class="article-updated">Updated <time class="dt-updated" datetime="{{ $updated.Format "2006-01-02T15:04:05Z07:00" }}">{{ $updated.Format "Jan 2, 2006" }}</time></p>{{ end }}
+</div>
+{{ if or $location.name $location.valid (isset .Params "mileage") .Params.last_verified }}
+<div class="article-context">
+  {{ with $location.name }}<span class="p-location">{{ . }}</span>{{ end }}
+  {{ if $location.valid }}<a href="https://www.openstreetmap.org/?mlat={{ $location.lat }}&amp;mlon={{ $location.long }}#map=12/{{ $location.lat }}/{{ $location.long }}">View map</a><span class="h-geo visually-hidden"><data class="p-latitude" value="{{ $location.lat }}">{{ $location.lat }}</data><data class="p-longitude" value="{{ $location.long }}">{{ $location.long }}</data></span>{{ end }}
+  {{ if isset .Params "mileage" }}<span>Mile {{ .Params.mileage }}</span>{{ end }}
+  {{ with .Params.last_verified }}<span>Last verified: {{ . }}</span>{{ end }}
+</div>
+{{ end }}
