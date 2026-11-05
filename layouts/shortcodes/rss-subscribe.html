@@ -1,0 +1,13 @@
+{{- $productionBaseURL := site.Params.productionBaseURL -}}
+{{- if not $productionBaseURL -}}
+    {{- errorf "The rss-subscribe shortcode requires params.productionBaseURL to keep subscriptions on the production site." -}}
+{{- end -}}
+{{- with site.Home.OutputFormats.Get "RSS" -}}
+    {{- $feedPath := strings.TrimPrefix site.Home.RelPermalink .RelPermalink -}}
+    {{- $feedURL := urls.JoinPath $productionBaseURL $feedPath -}}
+<p><a class="follow-reader" href="{{ printf "feed:%s" $feedURL | safeURL }}">Open in your feed reader</a></p>
+<p>If that link doesn't open a reader, paste this address into your reader's “Add feed” field, or its equivalent:</p>
+<p><a class="feed-address" href="{{ $feedURL }}">{{ $feedURL }}</a></p>
+{{- else -}}
+    {{- errorf "The rss-subscribe shortcode requires an RSS output on the homepage." -}}
+{{- end -}}
