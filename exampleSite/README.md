@@ -14,7 +14,7 @@ From a consuming site, run `hugo server --source themes/travelbook/exampleSite` 
 
 Build output, resource/cache files, and automated check artifacts stay under `exampleSite/` and are ignored by Git. Run `python3 tests/check_theme.py --hugo hugo` to verify the theme on the installed Hugo version.
 
-The revised design shows the latest entry in full and lists older dispatches beneath it. `location` (or legacy `place`) and `mileage` are optional. The video entry demonstrates a native silent loop with a poster, controls, and reduced-motion handling. Theme extraction/submodule instructions are in `../README.md`.
+The homepage shows a stable welcome and a compact latest-entry excerpt, with Journey and Cairn lists below. Full entries and the Journal archive have their own pages. `location` (or legacy `place`) and `mileage` are optional. The video entry demonstrates a native silent loop with a poster, controls, and reduced-motion handling. Theme extraction/submodule instructions are in `../README.md`.
 
 ## Verification — 2026-09-30
 
